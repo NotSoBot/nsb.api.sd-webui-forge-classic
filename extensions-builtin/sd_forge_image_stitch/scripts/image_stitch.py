@@ -5,6 +5,7 @@ from PIL import Image
 
 from backend.args import dynamic_args
 from modules import images, scripts, sd_models
+from modules.api import api
 from modules.processing import StableDiffusionProcessing, StableDiffusionProcessingImg2Img
 from modules.sd_samplers_common import approximation_indexes, images_tensor_to_samples
 from modules.shared import device, opts
@@ -58,7 +59,7 @@ class ImageStitch(scripts.Script):
 
         return [enable, references]
 
-    def process(self, p: StableDiffusionProcessing, enable: bool, references: list[tuple[Image.Image, str]]):
+    def process(self, p: StableDiffusionProcessing, enable: bool, references: list[tuple[Image.Image | str, str]]):
         if not (enable and references):
             if self.cached_parameters is not None:
                 self.cached_parameters = None
@@ -70,6 +71,8 @@ class ImageStitch(scripts.Script):
         if isinstance(p, StableDiffusionProcessingImg2Img):
             cache.append(p.init_img_hash)
         for reference, _ in references:
+            if isinstance(reference, str):
+                reference = api.decode_base64_to_image(reference)
             cache.append(self.hash_image(reference))
 
         if self.cached_parameters == cache:
