@@ -67,11 +67,12 @@ class ImageStitch(scripts.Script):
                 p.cached_uc = [None, None]
             return
 
+        references = references[:]
         for i in range(len(references)):
             reference, _ = references[i]
             if isinstance(reference, str):
                 reference = api.decode_base64_to_image(reference)
-                references[i] = (reference, _)
+                filtered_references[i] = (reference, _)
 
         cache: list[str | int] = [str(sd_models.model_data.forge_loading_parameters)]
         if isinstance(p, StableDiffusionProcessingImg2Img):
