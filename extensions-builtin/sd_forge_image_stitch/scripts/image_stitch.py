@@ -59,7 +59,7 @@ class ImageStitch(scripts.Script):
         return [enable, references]
 
     def process(self, p: StableDiffusionProcessing, enable: bool, references: list[tuple[Image.Image, str]]):
-        if not (enable and references and any(dynamic_args[key] for key in ("kontext", "edit"))):
+        if not (enable and references):
             if self.cached_parameters is not None:
                 self.cached_parameters = None
                 p.cached_c = [None, None]
